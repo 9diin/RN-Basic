@@ -1,75 +1,41 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { SearchCard } from "@/src/components/card";
+import { useLocation } from "@/src/hooks/use-location";
+import { Search } from "lucide-react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from "react-native";
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
-}
+    const { data, loading, fetchData } = useLocation();
+    const [keyword, setKeyword] = useState<string>("");
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+    useEffect(() => {
+        fetchData(keyword);
+    }, []);
+
+    // 검색
+    const handleSearch = () => fetchData(keyword);
+
+    return (
+        <View className="relative w-full h-full p-4 gap-4">
+            {/* 검색창 UI */}
+            <View className="flex-row items-center gap-2">
+                <View className="h-12 flex-1 flex-row items-center gap-2 px-2 border border-neutral-200 rounded-lg shadow-xs bg-white">
+                    <Search size={20} color={"#d4d4d4"} />
+                    <TextInput placeholder="검색어를 입력하세요." value={keyword} onChangeText={setKeyword} onSubmitEditing={handleSearch} className="w-full" />
+                </View>
+                <Pressable className="w-16 h-12 flex-row items-center justify-center bg-white rounded-lg border border-neutral-200" onPress={handleSearch}>
+                    <Text>검색</Text>
+                </Pressable>
+            </View>
+            {loading ? (
+                <ActivityIndicator size="large" color="#4B5563" />
+            ) : data === undefined ? (
+                <View className="w-full h-full items-center justify-center">
+                    <Text className="text-neutral-400 text-xl">검색어를 입력하세요.</Text>
+                </View>
+            ) : (
+                <FlatList data={data} renderItem={({ item }) => <SearchCard props={item} />} ItemSeparatorComponent={() => <View style={{ height: 12 }} />} />
+            )}
+        </View>
+    );
+}
