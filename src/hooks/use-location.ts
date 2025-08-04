@@ -11,8 +11,8 @@ export function useLocation() {
             const response = await fetch(`https://openapi.naver.com/v1/search/local.json?query=${query}&display=5&start=1&sort=random`, {
                 method: "GET",
                 headers: {
-                    "X-Naver-Client-Id": "j3am1DhWIHUZhpC9M_PI",
-                    "X-Naver-Client-Secret": "ztK2t6FmAC",
+                    "X-Naver-Client-Id": process.env.EXPO_PUBLIC_NAVER_CLINET_ID as string,
+                    "X-Naver-Client-Secret": process.env.EXPO_PUBLIC_NAVER_CLIENT_SECRET as string,
                 },
             });
             const data = await response.json();
