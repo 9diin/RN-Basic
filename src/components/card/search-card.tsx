@@ -1,3 +1,5 @@
+import { useAxisStore, useKeywordStore } from "@/src/stores";
+import { router } from "expo-router";
 import { ChevronRight } from "lucide-react-native";
 import { FlatList, Linking, Pressable, Text, View } from "react-native";
 import { Badge } from "../badge";
@@ -18,8 +20,20 @@ interface Props {
 }
 
 export function SearchCard({ props }: Props) {
+    const setKeywordState = useKeywordStore((state) => state.setKeyword);
+    const setMapx = useAxisStore((state) => state.setMapx);
+    const setMapy = useAxisStore((state) => state.setMapy);
+
+    const handleCardPress = () => {
+        setKeywordState(props.title);
+        setMapx((parseFloat(props.mapx) / 1e7).toFixed(5));
+        setMapy((parseFloat(props.mapy) / 1e7).toFixed(5));
+
+        router.push("/search");
+    };
+
     return (
-        <View className="w-full p-4 gap-2 border border-neutral-200 rounded-lg shadow-xs bg-white">
+        <Pressable className="w-full p-4 gap-2 border border-neutral-200 rounded-lg shadow-xs bg-white" onPress={handleCardPress}>
             <View className="w-full flex-row items-center justify-between">
                 {/* <Text>{props.category}</Text> */}
                 <FlatList data={props.category.split(">")} renderItem={({ item }) => <Chip label={item} />} horizontal={true} ItemSeparatorComponent={() => <View style={{ width: 8 }} />} />
@@ -48,6 +62,6 @@ export function SearchCard({ props }: Props) {
                     </View>
                 </View>
             </View>
-        </View>
+        </Pressable>
     );
 }
