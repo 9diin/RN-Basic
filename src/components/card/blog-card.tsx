@@ -1,4 +1,4 @@
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Linking, Pressable, Text, View } from "react-native";
 import { Chip } from "../chip";
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 
 export function BlogCard({ props }: Props) {
     return (
-        <Pressable className="w-full p-4 bg-white rounded-lg border border-neutral-200">
+        <Pressable className="w-full p-4 bg-white rounded-lg border border-neutral-200" onPress={() => Linking.openURL(props.link)}>
             <View className="w-full gap-2">
                 <View className="w-full flex-row gap-2">
                     <Image source={require("../../../assets/blog-logo.png")} className="w-6 h-6 mt-[2px]" />
